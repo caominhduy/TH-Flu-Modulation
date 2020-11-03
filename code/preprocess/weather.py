@@ -91,6 +91,72 @@ def preprocess_temperature(stations):
                 counter += 1
     print(f'{counter} OP files have been converted into CSV files')
 
+    # Dictionary of mapping states and stations
+    station_labels = {}
+    with open('data/geodata/state_abbr.txt', 'r') as f:
+        contents = f.read()
+        state_abbr_dict = ast.literal_eval(contents)
+    for id in stations['ID']:
+        station_labels[id] = stations[stations['ID'] == id]['STATE'].to_list()[0]
+
+    # Process daily data for each station into weekly average temperature,
+    # dew point, and humidity
+    counter = 0
+    for y in list(range(2008, 2020)):
+        input_path = 'data/weather/noaa/gsod_' + str(y)
+        for file in os.listdir(input_path):
+            input_full_path = input_path + '/' + file
+            df = pd.read_csv(input_full_path,\
+                            header=None,\
+                            dtype={0:'str', 1:'str'},\
+                            usecols=[0,1,2,3,5],\
+                            names=['station', 'wban', 'date', 'temp', 'dewp'],\
+                            parse_dates=['date'])
+            df['id'] = df['station'] + '-' + df['wban']
+            df = df.drop(['station', 'wban'], 1)
+            state = station_labels[df['id'][0]]
+            df['week'] = df['date'].dt.week
+            df = df.drop(['date', 'id'], 1)
+            df = df.groupby('week').mean()
+            # Calculate relative humidity from temperature and dew point using
+            # August-Roche-Magnus approximation
+            df['c'] = (df['temp']-32)*5/9
+            df['dewc'] = (df['dewp']-32)*5/9
+            df['hum'] = 100*(np.exp((17.625*df['dewc'])/\
+                            (243.04+df['dewc']))/\
+                            np.exp((17.625*df['c'])/(243.04+df['c'])))
+            df = df.drop(['c', 'dewc'], 1)
+
+            if not os.path.exists('data/weather/processed'):
+                os.mkdir('data/weather/processed')
+            if not os.path.exists('data/weather/processed/'+str(y)):
+                os.mkdir('data/weather/processed/'+str(y))
+
+            output_full_path = 'data/weather/processed/' + str(y) + '/' + state +\
+                                '-' + file
+            df.to_csv(output_full_path)
+            counter += 1
+            print(f'\rProcessed {counter} weather files', end='')
+
+    # Merge all the processed files into annual files, labelled by week and state
+
+
+
+    # for y in list(range(2008,2020)):
+    #     path = 'data/weather/processed/' + str(y) + '/'
+    #     for state in station_labels:
+    #         print(path + station_labels[state][0] + '-' + str(y) +\
+    #                         '.csv')
+    #         df = pd.read_csv(path + station_labels[state][0] + '-' + str(y) +\
+    #                         '.csv')
+    #         print(path + station_labels[state][0] + '-' + str(y) +\
+    #                         '.csv')
+    #         for station in station_labels[state]:
+    #             df_load = pd.read_csv(path + station + '-' + str(y) + '.csv')
+    #             df = pd.concat((df, df_load)).groupby('week').mean()
+    #         df.to_csv('data/weather/processed/' + str(y) + '-' + state + '.csv')
+
+    print('\n')
 
 
 def preprocess(option):
