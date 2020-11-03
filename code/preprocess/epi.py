@@ -16,7 +16,11 @@ def preprocess(path='data/epidemiology/CDC_2008_2021.csv'):
     df = pd.read_csv(path,\
                     header=0,\
                     low_memory=False,\
-                    usecols=['STATENAME', 'ACTIVITY LEVEL', 'WEEK', 'SEASON'])
+                    usecols=['STATENAME', 'ACTIVITY LEVEL', 'WEEK', 'WEEKEND'],
+                    parse_dates=['WEEKEND'])
+
+    df['YEAR'] = df['WEEKEND'].dt.year
+    df = df.drop(['WEEKEND'], 1)
 
     with open('data/geodata/state_abbr.txt', 'r') as f:
         contents = f.read()
@@ -25,21 +29,23 @@ def preprocess(path='data/epidemiology/CDC_2008_2021.csv'):
     # Filter state records only
     df = df[df['STATENAME'].isin(state_abbr_dict)]
 
-    # Check if there has been enough data for every season
-    season_hashmap = {}
-    for season in df['SEASON'].unique():
-        df_filtered = df[df['SEASON'] == season]
+    # Check if there has been enough data for every year
+    year_hashmap = {}
+    for year in df['YEAR'].unique():
+        df_filtered = df[df['YEAR'] == year]
         number_of_states = len(df_filtered['STATENAME'].unique())
-        season_hashmap[season] = number_of_states
-        print(f'For season {season}: {number_of_states} states are on records')
+        year_hashmap[year] = number_of_states
+        print(f'For year {year}: {number_of_states} states are on records')
 
     # Simplify the headers and names for convenience
     df = df.rename(columns={'STATENAME':'state',\
                             'ACTIVITY LEVEL': 'level',\
                             'WEEK': 'week',\
-                            'SEASON': 'season'})
+                            'YEAR': 'year'})
+
     df['level'] = df['level'].str.replace('Level ', '')
     df['level'] = df['level'].astype('int32')
+    df['year'] = df['year'].astype('str')
     df['state'] = df['state'].replace(state_abbr_dict)
 
     print('\n', '[SUCCESS] Preprocessed')

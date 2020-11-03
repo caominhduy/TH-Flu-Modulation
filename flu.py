@@ -1,5 +1,6 @@
 from code.preprocess.epi import preprocess as epi_preprocess
-from code.graph.render import epi_render
+from code.preprocess.weather import preprocess as noaa_preprocess
+from code.graph.render import epi_render, station_render
 import argparse
 
 __author__ = 'Duy Cao'
@@ -10,8 +11,12 @@ __version__ = '1.0.0'
 
 def main(args):
     if args.test:
-        df_flu = epi_preprocess()
-        epi_render(df_flu)
+        # df_flu = epi_preprocess()
+        # epi_render(df_flu)
+        # df_weather = noaa_preprocess('station')
+        # station_render(df_weather, 'All-Station')
+        noaa_preprocess('temp')
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(usage='use "-h" or "--help" for more instructions')
