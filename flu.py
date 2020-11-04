@@ -20,14 +20,31 @@ def main(args):
         # noaa_preprocess('temp')
         # weather_render()
         # merge()
+        # regress_plot('temp')
+        # regress_plot('humid')
+        regress_plot('test')
+    if args.graph:
+        df_flu = epi_preprocess()
+        epi_render(df_flu)
+        df_weather = noaa_preprocess('station')
+        station_render(df_weather, 'All-Station')
+        noaa_preprocess('temp')
+        weather_render()
+        merge()
         regress_plot('temp')
         regress_plot('humid')
-
+    if args.no_graph:
+        df_flu = epi_preprocess()
+        df_weather = noaa_preprocess('station')
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(usage='use "-h" or "--help" for more instructions')
+    parser.add_argument('--graph', action='store_true', \
+                        help='Process data and plot maps and graphs')
+    parser.add_argument('--no_graph', action='store_true', \
+                        help='Process data only')
     parser.add_argument('-t', '--test', action='store_true', \
-                    help='Download and preprocess latest data, train, and predict')
+                    help='Test')
     args = parser.parse_args()
     main(args)

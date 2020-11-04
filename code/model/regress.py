@@ -3,6 +3,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import os, sys
 import imageio
+import numpy as np
 
 __author__ = 'Duy Cao'
 __license__ = 'MIT'
@@ -26,3 +27,6 @@ def regress_plot(type):
         if not os.path.exists('image/regress'):
             os.mkdir('image/regress')
         regress_plot.figure.savefig('image/regress/reg_humid_flu.png')
+    if type == 'test':
+        sns.regplot(x='temp', y='level', data=df, log_x=True)
+        plt.show()
