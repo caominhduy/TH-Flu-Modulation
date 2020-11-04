@@ -1,6 +1,8 @@
 from code.preprocess.epi import preprocess as epi_preprocess
 from code.preprocess.weather import preprocess as noaa_preprocess
-from code.graph.render import epi_render, station_render
+from code.graph.render import epi_render, station_render, weather_render
+from code.model.merger import merge
+from code.model.regress import regress_plot
 import argparse
 
 __author__ = 'Duy Cao'
@@ -15,7 +17,12 @@ def main(args):
         # epi_render(df_flu)
         # df_weather = noaa_preprocess('station')
         # station_render(df_weather, 'All-Station')
-        noaa_preprocess('temp')
+        # noaa_preprocess('temp')
+        # weather_render()
+        # merge()
+        regress_plot('temp')
+        regress_plot('humid')
+
 
 
 if __name__ == '__main__':

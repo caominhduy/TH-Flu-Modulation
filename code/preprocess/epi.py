@@ -48,6 +48,7 @@ def preprocess(path='data/epidemiology/CDC_2008_2021.csv'):
     df['year'] = df['year'].astype('str')
     df['state'] = df['state'].replace(state_abbr_dict)
 
+    df.to_csv('data/epidemiology/processed_CDC_2008_2021.csv', index=False)
     print('\n', '[SUCCESS] Preprocessed')
     print(df)
     return df
