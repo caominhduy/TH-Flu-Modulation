@@ -68,7 +68,8 @@ def merge_weather():
 def merge():
     df_flu = merge_flu()
     df_weather = merge_weather()
-    df = df_flu.merge(df_weather, on=['year', 'week', 'state'])
+    df = df_flu.merge(df_weather, on=['week', 'year', 'state'])
     df = df.sort_values(['state','week', 'year'], ignore_index=True)
     print('MERGED!')
+    print(df)
     df.to_csv('data/processed.csv', index=False)

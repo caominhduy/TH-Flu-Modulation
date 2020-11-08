@@ -24,7 +24,7 @@ def epi_graph(df, ss, wk):
                         locationmode = 'USA-states',\
                         color='level',\
                         color_continuous_scale="Spectral_r",\
-                        range_color=(0, 10),\
+                        range_color=(0, 13),\
                         hover_name='state',\
                         hover_data={'state':False},\
                         scope="usa",\
@@ -129,7 +129,7 @@ def temp_render():
                                 hover_name='state',\
                                 hover_data={'state':False},\
                                 scope="usa",\
-                                labels={'temp':'Temp'},\
+                                labels={'temp':'Temp (oF)'},\
                                 width=1100,\
                                 height=600)
             fig.update_layout(

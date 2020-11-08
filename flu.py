@@ -2,7 +2,7 @@ from code.preprocess.epi import preprocess as epi_preprocess
 from code.preprocess.weather import preprocess as noaa_preprocess
 from code.graph.render import epi_render, station_render, weather_render
 from code.model.merger import merge
-from code.model.regress import regress_plot
+from code.model.regress import regress_plot, corr_eval
 import argparse
 
 __author__ = 'Duy Cao'
@@ -20,9 +20,10 @@ def main(args):
         # noaa_preprocess('temp')
         # weather_render()
         # merge()
-        # regress_plot('temp')
+        regress_plot('regplot-temp')
         # regress_plot('humid')
-        regress_plot('test')
+        # regress_plot('test')
+        # corr_eval()
     if args.graph:
         df_flu = epi_preprocess()
         epi_render(df_flu)
@@ -31,8 +32,6 @@ def main(args):
         noaa_preprocess('temp')
         weather_render()
         merge()
-        regress_plot('temp')
-        regress_plot('humid')
     if args.no_graph:
         df_flu = epi_preprocess()
         df_weather = noaa_preprocess('station')
@@ -41,7 +40,7 @@ def main(args):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(usage='use "-h" or "--help" for more instructions')
     parser.add_argument('--graph', action='store_true', \
-                        help='Process data and plot maps and graphs')
+                        help='Process data, plot maps and graphs')
     parser.add_argument('--no_graph', action='store_true', \
                         help='Process data only')
     parser.add_argument('-t', '--test', action='store_true', \
